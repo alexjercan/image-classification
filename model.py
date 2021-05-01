@@ -7,8 +7,8 @@
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 
+from general import set_parameter_requires_grad
 from torchvision.models.resnet import resnet50
 
 
@@ -16,7 +16,10 @@ class Model(nn.Module):
     def __init__(self, num_classes=30):
         super(Model, self).__init__()
         
-        self.model = resnet50(num_classes=num_classes)
+        self.model = resnet50(pretrained=True)
+        set_parameter_requires_grad(self.model)
+        num_ftrs = self.model.fc.in_features
+        self.model.fc = nn.Linear(num_ftrs, num_classes)
 
     def forward(self, img):
         return self.model(img)

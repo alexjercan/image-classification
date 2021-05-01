@@ -23,6 +23,11 @@ def init_weights(m):
         torch.nn.init.constant_(m.bias, 0)
 
 
+def set_parameter_requires_grad(model):
+    for param in model.parameters():
+        param.requires_grad = False
+
+
 def load_checkpoint(model, checkpoint_file, device):
     checkpoint = torch.load(checkpoint_file, map_location=device)
     init_epoch = checkpoint['epoch_idx'] + 1

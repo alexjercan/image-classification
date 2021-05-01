@@ -75,7 +75,6 @@ def train(config=None, config_test=None):
                                       workers=config.WORKERS, pin_memory=config.PIN_MEMORY, shuffle=config.SHUFFLE)
 
     model = Model()
-    model.apply(init_weights)
     solver = torch.optim.Adam(filter(lambda p: p.requires_grad, model.parameters()), 
                               lr=config.LEARNING_RATE, betas=config.BETAS,
                               eps=config.EPS, weight_decay=config.WEIGHT_DECAY)
