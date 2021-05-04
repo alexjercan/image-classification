@@ -7,6 +7,7 @@
 
 import os
 import json
+from copy import copy
 
 from torch.utils.data import Dataset, DataLoader
 from util import load_image
@@ -90,12 +91,13 @@ class LoadImages():
     
     def __transform__(self, data):
         img, output_path = data
+        og_img = copy(img)
         
         if self.transform is not None:
             augmentations = self.transform(image=img)
             img = augmentations["image"]
         
-        return img, output_path
+        return og_img, img, output_path
 
 
 if __name__ == "__main__":    
@@ -130,7 +132,7 @@ if __name__ == "__main__":
                 A.IAAEmboss(),
                 A.RandomBrightnessContrast(),            
             ], p=0.3),
-            A.HueSaturationValue(p=0.3),
+            A.Normalize(),
             M.MyToTensorV2(),
         ]
     )
@@ -147,7 +149,8 @@ if __name__ == "__main__":
     assert labels.shape == (2,), f"dataset error {labels.shape}"
     
     dataset = LoadImages(JSON, transform=img_transform)
-    img, path = next(iter(dataset))
+    og_img, img, path = next(iter(dataset))
+    assert og_img.shape == (256, 256, 3), f"dataset error {og_img.shape}"
     assert img.shape == (3, 256, 256), f"dataset error {img.shape}"
 
     print("dataset ok")

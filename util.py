@@ -25,10 +25,6 @@ def img2rgb(path):
         return None
 
     img = cv2.imread(path)
-
-    img = img / 255
-
-    img = np.array(img).astype(np.float32)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
     return img
@@ -37,13 +33,10 @@ def img2rgb(path):
 def plot_predictions(images, predictions, paths):
     scores, predictions = torch.max(predictions, dim=1)
 
-    images = images.cpu().numpy()
     predictions = predictions.cpu().numpy()
     scores = scores.cpu().numpy()
 
     for img, score, pred, path in zip(images, scores, predictions, paths):
-        img = img.transpose(1, 2, 0)
-        
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         fig.suptitle(f'{path}')
@@ -55,13 +48,10 @@ def plot_predictions(images, predictions, paths):
 def save_predictions(images, predictions, paths):
     scores, predictions = torch.max(predictions, dim=1)
 
-    images = images.cpu().numpy()
     predictions = predictions.cpu().numpy()
     scores = scores.cpu().numpy()
 
     for img, score, pred, path in zip(images, scores, predictions, paths):
-        img = img.transpose(1, 2, 0)
-        
         fig = plt.figure()
         ax = fig.add_subplot(1, 1, 1)
         fig.suptitle(f'{path}')

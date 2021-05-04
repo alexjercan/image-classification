@@ -9,6 +9,10 @@ import os
 import torch
 
 
+def tensors_to_device(tensors, device):
+    return (tensor.to(device, non_blocking=True) for tensor in tensors)
+
+
 def init_weights(m):
     if type(m) == torch.nn.Conv2d or type(m) == torch.nn.Conv3d or \
             type(m) == torch.nn.ConvTranspose2d or type(m) == torch.nn.ConvTranspose3d:

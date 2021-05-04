@@ -7,7 +7,6 @@
 # - https://web.eecs.umich.edu/~fouhey/2016/evalSN/evalSN.html
 #
 
-from math import radians
 import torch
 
 
