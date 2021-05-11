@@ -49,7 +49,7 @@ class BDataset(Dataset):
 
     def __transform__(self, data):
         img, label = data
-        
+
         if self.transform is not None:
             augmentations = self.transform(image=img)
             img = augmentations["image"]
@@ -62,25 +62,25 @@ class LoadImages():
         self.json_data = json_data
         self.transform = transform
         self.count = 0
-        
+
     def __len__(self):
         return len(self.json_data)
-        
+
     def __iter__(self):
         self.count = 0
         return self
-    
+
     def __next__(self):
         index = self.count
-        
+
         if self.count == self.__len__():
             raise StopIteration
         self.count += 1
-        
+
         data = self.__load__(index)
         data =  self.__transform__(data)
         return data
-        
+
     def __load__(self, index):
         img_path = self.json_data[index]["image"]
         output_img_path = self.json_data[index]["output"]
@@ -88,24 +88,24 @@ class LoadImages():
         img = load_image(img_path)
 
         return img, output_img_path
-    
+
     def __transform__(self, data):
         img, output_path = data
         og_img = copy(img)
-        
+
         if self.transform is not None:
             augmentations = self.transform(image=img)
             img = augmentations["image"]
-        
+
         return og_img, img, output_path
 
 
-if __name__ == "__main__":    
+if __name__ == "__main__":
     from config import JSON, IMAGE_SIZE
     import albumentations as A
     import my_albumentations as M
     import matplotlib.pyplot as plt
-    
+
     def visualize(image):
         plt.figure(figsize=(10, 10))
         plt.axis('off')
@@ -125,29 +125,28 @@ if __name__ == "__main__":
             A.OneOf([
                 M.MyOpticalDistortion(p=0.3),
                 M.MyGridDistortion(p=0.1),
-                M.MyIAAPiecewiseAffine(p=0.3),
             ], p=0.2),
             A.OneOf([
                 A.IAASharpen(),
                 A.IAAEmboss(),
-                A.RandomBrightnessContrast(),            
+                A.RandomBrightnessContrast(),
             ], p=0.3),
             A.Normalize(),
             M.MyToTensorV2(),
         ]
     )
-    
+
     img_transform = A.Compose(
         [
             M.MyToTensorV2(),
         ]
     )
 
-    _, dataloader = create_dataloader("../bdataset", "train1.json", transform=my_transform)
+    _, dataloader = create_dataloader("../bdataset", "train.json", transform=my_transform)
     imgs, labels = next(iter(dataloader))
     assert imgs.shape == (2, 3, 256, 256), f"dataset error {imgs.shape}"
     assert labels.shape == (2,), f"dataset error {labels.shape}"
-    
+
     dataset = LoadImages(JSON, transform=img_transform)
     og_img, img, path = next(iter(dataset))
     assert og_img.shape == (256, 256, 3), f"dataset error {og_img.shape}"

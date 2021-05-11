@@ -13,11 +13,12 @@ from torchvision.models.resnet import resnet50
 
 
 class Model(nn.Module):
-    def __init__(self, num_classes=30):
+    def __init__(self, num_classes=30, pretrained=False):
         super(Model, self).__init__()
-        
-        self.model = resnet50(pretrained=True)
-        set_parameter_requires_grad(self.model)
+
+        self.model = resnet50(pretrained=pretrained)
+        if (pretrained):
+            set_parameter_requires_grad(self.model)
         num_ftrs = self.model.fc.in_features
         self.model.fc = nn.Linear(num_ftrs, num_classes)
 
@@ -33,12 +34,12 @@ class LossFunction(nn.Module):
         self.class_loss_val = 0
 
     def forward(self, predictions, targets):
-                
+
         class_loss = self.loss_fn(predictions, targets)
         self.class_loss_val = class_loss.item()
 
         return class_loss
-    
+
     def show(self):
         loss = self.class_loss_val
         return f'(class_loss:{loss:.4f})'
