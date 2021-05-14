@@ -59,3 +59,4 @@ def save_predictions(images, predictions, paths):
         ax.axis('off')
         ax.imshow(img)
         plt.savefig(str(Path(path)))
+        plt.close()
